@@ -12,7 +12,39 @@
   <main class="main">
 
     <div class="todo">
-      <h2 class="todo__title">To Do List</h2>
+      <div class="todo__header">
+        <h2 class="todo__title">I Must Do</h2>
+
+        <button class="button button--add">
+          <span>+</span>
+          <div>Добавить</div>
+        </button>
+
+        <button class="button button--clear-all">
+          <span>-</span>
+          <div>Очистить</div>
+        </button>
+      </div>
+
+      <div class="todo__add-form">
+
+        <div class="add-form__buttons">
+          <button class="button button--cancel-item" id="cancelItemBtn"></button>
+          <button class="button button--enter-item" id="enterItemBtn"></button>
+        </div>
+
+        <label class="add-form__label label--name">
+          <input class="add-form__input input--name" type="text" id="inputName" placeholder="Название *">
+        </label>
+
+        <label class="add-form__label label--description">
+          <input class="add-form__input input--description" type="text" id="inputDescription" placeholder="Описание">
+        </label>
+
+        <label class="add-form__label label--datetime">
+          <input class="add-form__input input--datetime" type="datetime-local" id="inputDatetime" placeholder="Дата и время">
+        </label>
+      </div>
 
       <ul class="todo__list">
         <li class="todo__item">
@@ -23,7 +55,7 @@
 
           <div class="item__name">Название задачи</div>
           <div class="item__description">Описание задачи Описание задачи</div>
-          <div class="item__datetime">Дата и время дедлайна задачи</div>
+          <div class="item__datetime">16.01.2022 - 21:55</div>
 
           <div class="item__controls">
             <button class="button button--edit">
@@ -91,13 +123,6 @@
           </div>
         </li>
       </ul>
-
-      <form class="todo__form">
-        <button class="button button--add">
-          <span>+</span>
-          Добавить
-        </button>
-      </form>
     </div>
 
   </main>

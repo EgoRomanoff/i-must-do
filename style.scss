@@ -30,36 +30,56 @@ h2 {
   align-items: center;
   cursor: pointer;
 
-  &--add {
+  &--add, &--clear-all {
     width: 100%;
     max-width: fit-content;
+    height: 25px;
     border: none;
-    margin: 0 auto;
-    padding: 4px;
-    border-radius: 6px;
-    background: transparent;
-    font: 1rem/1.25rem 'Rubik', sans-serif;
-    font-weight: 400;
+    border-radius: 30px;
+    padding-right: 8px;
+    background: #fff;
+    font: .875rem/1.5625rem 'Rubik', sans-serif;
 
     & > span {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 20px;
-      height: 20px;
+      width: 25px;
+      height: 25px;
       margin-right: 5px;
       border-radius: 50%;
-      background: transparent;
-      color: #5eca5e;
-      // color: #4db34d;
-      font: 1.25rem/100% 'Roboto', sans-serif;
+      color: #fff;
+      font: 1.5625rem/100% 'Roboto', sans-serif;
       font-weight: 700;
       transition: .15s ease-in-out;
     }
+  }
 
-    &:hover > span {
-      color: #fff;
+  &--add {
+    & > span {
       background: #5eca5e;
+    }
+  }
+
+  &--enter-item, &--cancel-item {
+    width: 18px;
+    height: 18px;
+    border: none;
+    border-radius: 50%;
+  }
+
+  &--enter-item {
+    background: green;
+    margin-top: auto;
+  }
+
+  &--cancel-item {
+    background: red;
+  }
+
+  &--clear-all {
+    & > span {
+      background: #ca5e5e;
     }
   }
 
@@ -112,16 +132,24 @@ h2 {
   padding: 15px 10px 10px;
   background: linear-gradient(135deg, #d3f7f7 30%,#e7f7f7 100%);
 
-  &__title {
+  &__header {
+    display: flex;
+    align-items: center;
     margin-bottom: 15px;
-    text-align: center;
+    column-gap: 10px;
+    padding-left: 15px;
+  }
+
+  &__title {
+    line-height: 100%;
+    margin-right: 5px;
   }
 
   &__list {
     display: flex;
     flex-direction: column;
     row-gap: 8px;
-    border-radius: 6px 6px 0 0;
+    border-radius: 6px;
     padding: 15px;
     background: #fff;
     list-style: none;
@@ -137,9 +165,11 @@ h2 {
     column-gap: 10px;
     padding-bottom: 8px;
     border-bottom: 1px solid #e7e7e7;
+    transition: .15s ease-in-out;
     // background: lightpink;
 
     &:hover {
+      border-color: #5e5e5e;
 
       & .button {
         opacity: 1;
@@ -147,13 +177,75 @@ h2 {
     }
   }
 
-  &__form {
+  &__add-form {
+    display: grid;
+    grid-template-areas:
+      'buttons input-name'
+      'buttons input-description'
+      'buttons input-datetime';
+    grid-template-columns: 18px auto;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    padding: 15px;
+    background: #fff;
+  }
+}
+
+.add-form {
+
+  &__buttons {
+    grid-area: buttons;
     display: flex;
     flex-direction: column;
-    border-radius: 0 0 6px 6px;
-    padding: 0 15px 15px;
-    background: #fff;
+    justify-content: center;
+  }
 
+  &__label {
+    display: flex;
+    align-items: center;
+    font: 1rem/1.5rem 'Rubik', sans-serif;
+    white-space: nowrap;
+
+    & .label--name {
+      grid-area: input-name;
+    }
+
+    & .label--description {
+      grid-area: input-description;
+    }
+
+    & .label--datetime {
+      grid-area: input-datetime;
+    }
+  }
+
+  &__input {
+    width: 100%;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #e7e7e7;
+    margin-left: 10px;
+    transition: .15s ease-in-out;
+
+    &:hover, &:focus {
+      border-color: #5e5e5e;
+    }
+
+    &.input--name {
+      color: #141414;
+      font: 1rem/1.5rem 'Rubik', sans-serif;
+      font-weight: 500;
+    }
+
+    &.input--description, &.input--datetime {
+      margin-top: 3px;
+      color: #5e5e5e;
+      font: .875rem/1.125rem 'Rubik', sans-serif;
+    }
+
+    &.input--datetime {
+      height: 19px;
+    }
   }
 }
 
@@ -173,11 +265,13 @@ h2 {
   }
 
   &__description {
+    margin-top: 3px;
     grid-area: description;
   }
 
   &__datetime {
     grid-area: datetime;
+    margin-top: 3px;
 
     &::before {
       content: '';
