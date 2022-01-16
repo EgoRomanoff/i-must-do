@@ -1,0 +1,277 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=Rubik:wght@400;500;600&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+html, body {
+  color: #141414;
+  font: 16px/normal 'Rubik', sans-serif;
+  font-weight: 400;
+}
+
+body {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(40%, #aee6e6), to(#d3ebeb));
+  background: linear-gradient(#aee6e6 40%, #d3ebeb 100%);
+}
+
+h2 {
+  font: 1.375rem/1.625rem 'Rubik', sans-serif;
+  font-weight: 600;
+}
+
+.button {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  cursor: pointer;
+}
+
+.button--add {
+  width: 100%;
+  max-width: -webkit-fit-content;
+  max-width: -moz-fit-content;
+  max-width: fit-content;
+  border: none;
+  margin: 0 auto;
+  padding: 4px;
+  border-radius: 6px;
+  background: transparent;
+  font: 1rem/1.25rem 'Rubik', sans-serif;
+  font-weight: 400;
+}
+
+.button--add > span {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: transparent;
+  color: #5eca5e;
+  font: 1.25rem/100% 'Roboto', sans-serif;
+  font-weight: 700;
+  -webkit-transition: .15s ease-in-out;
+  transition: .15s ease-in-out;
+}
+
+.button--add:hover > span {
+  color: #fff;
+  background: #5eca5e;
+}
+
+.button--delete, .button--edit {
+  min-width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  opacity: 0;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.button--delete svg, .button--edit svg {
+  -webkit-transition: fill .15s ease-in-out;
+  transition: fill .15s ease-in-out;
+}
+
+.button--delete:hover {
+  background: #fdc6c6;
+}
+
+.button--delete:hover svg {
+  fill: #490000;
+}
+
+.button--edit:hover {
+  background: #d6fdc6;
+}
+
+.button--edit:hover svg {
+  fill: #154900;
+}
+
+.main {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+}
+
+.todo {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  width: 100%;
+  max-width: 425px;
+  min-width: 320px;
+  border: 1px solid #dff5f5;
+  border-radius: 6px;
+  padding: 15px 10px 10px;
+  background: linear-gradient(135deg, #d3f7f7 30%, #e7f7f7 100%);
+}
+
+.todo__title {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.todo__list {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  row-gap: 8px;
+  border-radius: 6px 6px 0 0;
+  padding: 15px;
+  background: #fff;
+  list-style: none;
+}
+
+.todo__item {
+  display: -ms-grid;
+  display: grid;
+      grid-template-areas: 'checkbox name controls' 'checkbox description description' 'checkbox datetime datetime';
+  -ms-grid-columns: 18px auto 50px;
+      grid-template-columns: 18px auto 50px;
+  -webkit-column-gap: 10px;
+          column-gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.todo__item:hover .button {
+  opacity: 1;
+}
+
+.todo__form {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  border-radius: 0 0 6px 6px;
+  padding: 0 15px 15px;
+  background: #fff;
+}
+
+.item__name {
+  -ms-grid-row: 1;
+  -ms-grid-column: 2;
+  grid-area: name;
+  font: 1rem/1.5rem 'Rubik', sans-serif;
+  font-weight: 500;
+}
+
+.item__description, .item__datetime {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  color: #5e5e5e;
+  font: .875rem/1.125rem 'Rubik', sans-serif;
+}
+
+.item__description {
+  -ms-grid-row: 2;
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 2;
+  grid-area: description;
+}
+
+.item__datetime {
+  -ms-grid-row: 3;
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 2;
+  grid-area: datetime;
+}
+
+.item__datetime::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+  background: url(icons/calendar.png) center/cover no-repeat;
+}
+
+.item__controls {
+  -ms-grid-row: 1;
+  -ms-grid-column: 3;
+  grid-area: controls;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  gap: 2px;
+}
+
+.checkbox {
+  -ms-grid-row: 1;
+  -ms-grid-row-span: 3;
+  -ms-grid-column: 1;
+  grid-area: checkbox;
+  position: relative;
+}
+
+.checkbox__label::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  border: 2px solid #aee6e6;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+
+.checkbox__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.checkbox__input:checked + .checkbox__label::before {
+  background: #aee6e6;
+}
