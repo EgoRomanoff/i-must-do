@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=Rubik:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 * {
   margin: 0;
@@ -8,7 +8,7 @@
 
 html, body {
   color: #141414;
-  font: 16px/normal 'Rubik', sans-serif;
+  font: 16px/normal 'Inter', sans-serif;
   font-weight: 400;
 }
 
@@ -16,12 +16,13 @@ body {
   position: relative;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(#aee6e6 40%, #d3ebeb 100%);
+  background: linear-gradient(135deg, #b3eaf8 40%, #dcf8ff 100%);
+  overflow: hidden;
 }
 
 h2 {
-  font: 1.375rem/1.625rem 'Rubik', sans-serif;
-  font-weight: 600;
+  font: 1.375rem/1.875rem 'Inter', sans-serif;
+  font-weight: 700;
 }
 
 .button {
@@ -30,67 +31,46 @@ h2 {
   align-items: center;
   cursor: pointer;
 
-  &--add, &--clear-all {
-    width: 100%;
-    max-width: fit-content;
-    height: 25px;
+  &--add, &--clear-all,
+  &--enter-item, &--cancel-item,
+  &--delete, &--edit {
     border: none;
-    border-radius: 30px;
-    padding-right: 8px;
-    background: #fff;
-    font: .875rem/1.5625rem 'Rubik', sans-serif;
+    border-radius: 50%;
+    outline: 2px solid transparent;
+    background: transparent;
+    transition: all .2s ease-in-out;
+  }
 
-    & > span {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 25px;
-      height: 25px;
-      margin-right: 5px;
-      border-radius: 50%;
-      color: #fff;
-      font: 1.5625rem/100% 'Roboto', sans-serif;
-      font-weight: 700;
-      transition: .15s ease-in-out;
+  &--add, &--enter-item, &--edit {
+
+    &:hover {
+      outline-color: #b6ebc3;
+      background: #fff;
     }
   }
 
-  &--add {
-    & > span {
-      background: #5eca5e;
+  &--clear-all, &--cancel-item, &--delete {
+
+    &:hover {
+      outline-color: #e79d9d;
+      background: #fff;
     }
+  }
+
+  &--add, &--clear-all {
+    width: 30px;
+    height: 30px;
   }
 
   &--enter-item, &--cancel-item {
-    width: 18px;
-    height: 18px;
-    border: none;
-    border-radius: 50%;
-  }
-
-  &--enter-item {
-    background: green;
-    margin-top: auto;
-  }
-
-  &--cancel-item {
-    background: red;
-  }
-
-  &--clear-all {
-    & > span {
-      background: #ca5e5e;
-    }
+    width: 26px;
+    height: 26px;
   }
 
   &--delete, &--edit {
-    min-width: 24px;
-    height: 24px;
-    border: none;
-    border-radius: 50%;
-    background: transparent;
+    width: 26px;
+    height: 26px;
     opacity: 0;
-    transition: all .15s ease-in-out;
 
     svg {
       transition: fill .15s ease-in-out;
@@ -98,7 +78,6 @@ h2 {
   }
 
   &--delete:hover {
-    background: #fdc6c6;
 
     svg {
       fill: #490000;
@@ -106,7 +85,6 @@ h2 {
   }
 
   &--edit:hover {
-    background: #d6fdc6;
 
     svg {
       fill: #154900;
@@ -115,44 +93,85 @@ h2 {
 }
 
 .main {
+  position: relative;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  padding: 70px 15px 15px;
   height: 100%;
 }
 
 .todo {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 425px;
-  min-width: 320px;
-  border: 1px solid #dff5f5;
+  min-width: 290px;
+  height: 100%;
+  border: 1px solid #ebfdfd;
   border-radius: 6px;
   padding: 15px 10px 10px;
-  background: linear-gradient(135deg, #d3f7f7 30%,#e7f7f7 100%);
+  background: linear-gradient(135deg, #e3fcfc 30%,#defdfd 100%);
+  z-index: 10
+  ;
 
   &__header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
-    column-gap: 10px;
-    padding-left: 15px;
+    padding: 0 20px;
+    z-index: 9;
   }
 
-  &__title {
-    line-height: 100%;
-    margin-right: 5px;
+  &-header {
+
+    &__buttons {
+      display: flex;
+      column-gap: 10px;
+    }
+  }
+
+  &__add-form {
+    display: flex;
+    flex-direction: column;
+    max-height: 0;
+    border-radius: 6px;
+    padding: 0 20px;
+    background: #fff;
+    z-index: -1;
+    transition: max-height .4s cubic-bezier(0.215, 0.61, 0.355, 1),
+                padding .3s cubic-bezier(0.215, 0.61, 0.355, 1) .1s;
+    overflow: hidden;
+
+
+    &.showed {
+      max-height: 164px;
+      padding: 15px 20px;
+
+      & input, div {
+        opacity: 1;
+      }
+    }
+
+    & input, div {
+      opacity: 0;
+      transition: opacity .35s ease;
+    }
   }
 
   &__list {
     display: flex;
     flex-direction: column;
-    row-gap: 8px;
+    row-gap: 10px;
+    margin-top: 10px;
     border-radius: 6px;
-    padding: 15px;
+    padding: 15px 20px 20px;
     background: #fff;
     list-style: none;
+    overflow-y: scroll;
+    overflow-x: hidden;
   }
 
   &__item {
@@ -161,12 +180,13 @@ h2 {
       'checkbox name controls'
       'checkbox description description'
       'checkbox datetime datetime';
-    grid-template-columns: 18px auto 50px;
+    grid-template-columns: 20px auto 58px;
     column-gap: 10px;
-    padding-bottom: 8px;
+    padding-bottom: 10px;
     border-bottom: 1px solid #e7e7e7;
-    transition: .15s ease-in-out;
-    // background: lightpink;
+    opacity: 1;
+    transition: border-color .2s ease-in-out,
+                opacity .3s ease-in-out .3s;
 
     &:hover {
       border-color: #5e5e5e;
@@ -175,56 +195,21 @@ h2 {
         opacity: 1;
       }
     }
-  }
 
-  &__add-form {
-    display: grid;
-    grid-template-areas:
-      'buttons input-name'
-      'buttons input-description'
-      'buttons input-datetime';
-    grid-template-columns: 18px auto;
-    margin-bottom: 10px;
-    border-radius: 6px;
-    padding: 15px;
-    background: #fff;
+    &.hidden {
+      opacity: 0;
+    }
   }
 }
 
 .add-form {
 
-  &__buttons {
-    grid-area: buttons;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  &__label {
-    display: flex;
-    align-items: center;
-    font: 1rem/1.5rem 'Rubik', sans-serif;
-    white-space: nowrap;
-
-    & .label--name {
-      grid-area: input-name;
-    }
-
-    & .label--description {
-      grid-area: input-description;
-    }
-
-    & .label--datetime {
-      grid-area: input-datetime;
-    }
-  }
-
   &__input {
     width: 100%;
+    min-height: 0;
     outline: none;
     border: none;
     border-bottom: 1px solid #e7e7e7;
-    margin-left: 10px;
     transition: .15s ease-in-out;
 
     &:hover, &:focus {
@@ -233,19 +218,26 @@ h2 {
 
     &.input--name {
       color: #141414;
-      font: 1rem/1.5rem 'Rubik', sans-serif;
-      font-weight: 500;
+      font: 1rem/2rem 'Inter', sans-serif;
+      font-weight: 600;
     }
 
     &.input--description, &.input--datetime {
       margin-top: 3px;
       color: #5e5e5e;
-      font: .875rem/1.125rem 'Rubik', sans-serif;
+      font: .875rem/1.625rem 'Inter', sans-serif;
     }
 
     &.input--datetime {
-      height: 19px;
+      height: 27px;
     }
+  }
+
+  &__buttons {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 10px;
+    padding: 15px 0 0;
   }
 }
 
@@ -253,40 +245,45 @@ h2 {
 
   &__name {
     grid-area: name;
-    font: 1rem/1.5rem 'Rubik', sans-serif;
-    font-weight: 500;
+    font: 1rem/1.625rem 'Inter', sans-serif;
+    font-weight: 600;
   }
 
   &__description, &__datetime {
-    position: relative;
     display: flex;
+    align-items: center;
+    margin-top: 6px;
     color: #5e5e5e;
-    font: .875rem/1.125rem 'Rubik', sans-serif;
+    font: .875rem/1.125rem 'Inter', sans-serif;
+
+    &::before {
+      width: 17px;
+      height: 17px;
+      margin: 0 8px auto -1px;
+    }
   }
 
   &__description {
-    margin-top: 3px;
     grid-area: description;
+
+    &::before {
+      content: url(icons/icon-description.svg);
+    }
   }
 
   &__datetime {
     grid-area: datetime;
-    margin-top: 3px;
 
     &::before {
-      content: '';
-      width: 16px;
-      height: 16px;
-      margin-right: 5px;
-      background: url(icons/calendar.png) center/cover no-repeat;
+      content: url(icons/icon-calendar.svg);
     }
   }
 
-  &__controls {
+  &__buttons {
     grid-area: controls;
     display: flex;
     justify-content: flex-end;
-    gap: 2px;
+    gap: 6px;
   }
 }
 
@@ -299,10 +296,10 @@ h2 {
     position: absolute;
     top: 0;
     left: 0;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     margin-top: 3px;
-    border: 2px solid #aee6e6;
+    border: 2px solid #8dd5e7;
     border-radius: 50%;
     background: #fff;
     cursor: pointer;
@@ -316,7 +313,8 @@ h2 {
     clip: rect(0 0 0 0);
 
     &:checked + .checkbox__label::before {
-      background: #aee6e6;
+      background: #8dd5e7
+                  url(icons/icon-check.svg) center/cover no-repeat;
     }
   }
 }
