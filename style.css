@@ -47,6 +47,10 @@ h2 {
   transition: all .2s ease-in-out;
 }
 
+.button--add svg, .button--clear-all svg, .button--enter-item svg, .button--cancel-item svg, .button--delete svg, .button--edit svg {
+  pointer-events: none;
+}
+
 .button--add:hover, .button--enter-item:hover, .button--edit:hover {
   outline-color: #b6ebc3;
   background: #fff;
@@ -193,6 +197,10 @@ h2 {
   list-style: none;
   overflow-y: scroll;
   overflow-x: hidden;
+}
+
+.todo__info-span {
+  text-align: center;
 }
 
 .todo__item {

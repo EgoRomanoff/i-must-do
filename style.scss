@@ -39,6 +39,10 @@ h2 {
     outline: 2px solid transparent;
     background: transparent;
     transition: all .2s ease-in-out;
+
+    svg {
+      pointer-events: none;
+    }
   }
 
   &--add, &--enter-item, &--edit {
@@ -172,6 +176,10 @@ h2 {
     list-style: none;
     overflow-y: scroll;
     overflow-x: hidden;
+  }
+
+  &__info-span {
+    text-align: center;
   }
 
   &__item {
