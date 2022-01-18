@@ -44,12 +44,12 @@ function createNewElement(tagname, classname) {
   createdElem.className = classname
 
   if (tagname === 'input') {
-    createdElem.id = 'check'
+    createdElem.id = `check-${toDoList.children.length + 1}`
     createdElem.type = 'checkbox'
   }
 
   if (tagname === 'label') {
-    createdElem.setAttribute('for', 'check')
+    createdElem.setAttribute('for', `check-${toDoList.children.length + 1}`)
   }
 
   if (classname === 'button button--edit') {
@@ -67,7 +67,7 @@ function convertDatetime(curValue) {
   const re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/
   return curValue.replace(re, '$3.$2.$1 - $4:$5')
 }
-// TODO: ИСПРАВИТЬ ФУНКЦИЮ!!!!
+
 function createToDoItem() {
 
   if (!validateForm()) {
@@ -78,14 +78,14 @@ function createToDoItem() {
 
     let newToDoItem = document.createElement('li')
     newToDoItem.className = 'todo__item hidden'
+    let checkboxElem
+    let buttonsElem
 
     let tagsArr = ['div', 'input', 'label', 'div', 'button', 'button', 'div']
 
     let classesArr = ['checkbox', 'checkbox__input', 'checkbox__label', 'item__buttons', 'button button--edit', 'button button--delete', 'item__name']
 
     let elemsArr = []
-
-    // console.log(inputDescription.value, inputDatetime.value)
 
     if (inputDescription.value !== '') {
       tagsArr.push('div')
@@ -97,47 +97,31 @@ function createToDoItem() {
       classesArr.push('item__datetime')
     }
 
-    // console.log(tagsArr, classesArr);
-
     for (let i = 0; i < tagsArr.length; i++) {
       elemsArr.push(createNewElement(tagsArr[i], classesArr[i]))
     }
 
-    // console.log(elemsArr);
+    checkboxElem = elemsArr[0]
+    checkboxElem.append(elemsArr[1], elemsArr[2])
 
-    newToDoItem.append(elemsArr[0].append(elemsArr[1], elemsArr[2]))
+    buttonsElem = elemsArr[3]
+    buttonsElem.append(elemsArr[4], elemsArr[5])
 
-    console.log(newToDoItem);
-
-    elemsArr[3].append(elemsArr[4], elemsArr[5])
     elemsArr[6].insertAdjacentText('afterbegin', inputName.value)
-
-    // console.log(elemsArr);
+    newToDoItem.append(checkboxElem, buttonsElem, elemsArr[6])
 
     if (classesArr.includes('item__description') && classesArr.includes('item__datetime')) {
-      console.log('и то и другое');
       elemsArr[7].insertAdjacentText('afterbegin', inputDescription.value)
       elemsArr[8].insertAdjacentText('afterbegin', convertDatetime(inputDatetime.value))
-    }
-
-    if (classesArr.includes('item__description')) {
-      console.log('только описание');
+      newToDoItem.append(elemsArr[7], elemsArr[8])
+    } else if (classesArr.includes('item__description')) {
       elemsArr[7].insertAdjacentText('afterbegin', inputDescription.value)
-    }
-
-    if (classesArr.includes('item__datetime')){
-      console.log('только дата');
-      console.log(inputDatetime.value);
+      newToDoItem.append(elemsArr[7])
+    } else if (classesArr.includes('item__datetime')){
       elemsArr[7].insertAdjacentText('afterbegin', convertDatetime(inputDatetime.value))
+      newToDoItem.append(elemsArr[7])
     }
-
-    // console.log(elemsArr);
-    // elemsArr[0].append(elemsArr[1], elemsArr[4], elemsArr[5], elemsArr[6], elemsArr[7])
-    newToDoItem.append(...elemsArr)
-
-    // console.log(elemsArr);
-    console.log(newToDoItem);
-
+    // console.log(newToDoItem);
     toDoList.append(newToDoItem)
     clearInputs()
     closeAddForm()
