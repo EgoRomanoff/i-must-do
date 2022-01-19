@@ -146,8 +146,10 @@ function createToDoItem() {
       elemsArr[7].insertAdjacentText('afterbegin', convertDatetime(inputDatetime.value))
       newToDoItem.append(elemsArr[7])
     }
+
+    let infoSpan = document.querySelector('.todo__info-span')
     // console.log(newToDoItem);
-    if (document.getElementsByClassName('todo__info-span')) {
+    if (infoSpan) {
       toDoList.children[0].remove()
     }
 
