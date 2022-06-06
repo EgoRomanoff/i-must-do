@@ -222,8 +222,15 @@ h2 {
   }
 
   &__create-form {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    gap: 0px 16px;
+    grid-template-areas:
+      "name name"
+      "description description"
+      "date time"
+      "buttons buttons";
     min-height: 0;
     max-height: 0;
     border-radius: 6px;
@@ -234,7 +241,6 @@ h2 {
                 padding .3s cubic-bezier(0.215, 0.61, 0.355, 1),
                 min-height .3s ease;
     overflow: hidden;
-
 
     &.showed {
       min-height: 154px;
@@ -341,24 +347,38 @@ h2 {
     }
 
     &.input--name {
+      grid-area: name;
       color: #141414;
       font: 1rem/2rem 'Inter', sans-serif;
       font-weight: 600;
     }
 
-    &.input--description, &.input--datetime {
+    &.input--description, &.input--date, &.input--time {
       margin-top: 3px;
       color: #5e5e5e;
       font: .875rem/1.625rem 'Inter', sans-serif;
     }
 
-    &.input--datetime {
+    &.input--description {
+      grid-area: description;
+    }
+
+    &.input--date, &.input--time {
       height: 27px;
       min-height: 27px;
+    }
+
+    &.input--date {
+      grid-area: date;
+    }
+
+    &.input--time {
+      grid-area: time;
     }
   }
 
   &__buttons {
+    grid-area: buttons;
     display: flex;
     justify-content: space-between;
     column-gap: 10px;
@@ -369,13 +389,20 @@ h2 {
 .item {
 
   &__content {
+    position: relative;
     grid-area: 1 / 2 / 4 / 4;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "name name"
+      "description description"
+      "date time";
     transition: opacity .2s ease;
   }
 
   &__name {
+    grid-area: name;
     max-width: 80%;
     word-wrap: normal;
     overflow: hidden;
@@ -383,17 +410,33 @@ h2 {
     font-weight: 600;
   }
 
-  &__description, &__datetime {
+  &__description, &__date, &__time {
     display: flex;
-    align-items: center;
-    margin-top: 6px;
     color: #5e5e5e;
     font: .875rem/1.125rem 'Inter', sans-serif;
+  }
+
+  &__description {
+    grid-area: description;
+    width: 100%;
+    word-wrap: normal;
+    margin-top: 4px;
 
     &::before {
       width: 17px;
       height: 17px;
-      margin: 0 8px auto -1px;
+      margin: 0 6px 0 0;
+    }
+  }
+
+  &__date, &__time {
+    margin-top: 6px;
+    // align-self: center;
+
+    &::before {
+      width: 17px;
+      height: 17px;
+      margin: -1px 6px 0 0;
     }
   }
 
@@ -401,7 +444,11 @@ h2 {
     content: url(icons/icon-description.svg);
   }
 
-  &__datetime::before {
+  &__date::before {
+    content: url(icons/icon-calendar.svg);
+  }
+
+  &__time::before {
     content: url(icons/icon-calendar.svg);
   }
 
