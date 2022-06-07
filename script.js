@@ -17,10 +17,12 @@ noTasksLabel.insertAdjacentText('afterbegin', 'No tasks yet :(')
 let editItemBtns,
 	deleteItemBtns,
 	itemCheckboxes,
-	listLength = checkListLength(),
 	editedItem = undefined
 
+let listLength = checkListLength()
+renderUserTasks()
 toggleNoTasksLabel()
+// getDataToLocalStorage()
 
 toDo.addEventListener('click', e => {
 	itemCheckboxes = Array.from(document.querySelectorAll('.checkbox__label'))
@@ -50,6 +52,30 @@ toDo.addEventListener('click', e => {
 	if (e.target === clearAllBtn) clearAllItems()
 })
 // ===== FUNCTIONS =====
+function setTaskToLocalStorage(dataObj) {
+	localStorage.setItem(
+		`${listLength + 1}`,
+		JSON.stringify(dataObj)
+	)
+}
+
+function getDataToLocalStorage() {
+	let userTasks = {}
+
+	for (let i = 0; i < localStorage.length; i++) {
+		let taskID = localStorage.key(i)
+		userTasks[taskID] = JSON.parse(localStorage.getItem(taskID))
+	}
+
+	return userTasks
+}
+// TODO: исправить неправильные айдишники при загрузке
+function renderUserTasks(tasks = getDataToLocalStorage()) {
+	console.log(tasks)
+	for (task in tasks) {
+		renderToDoItem(tasks[task])
+	}
+}
 
 function toggleNoTasksLabel() {
 	!toDoList.children.length
@@ -60,7 +86,7 @@ function toggleNoTasksLabel() {
 function checkListLength() {
 	return toDoList.querySelector('.todo__no-tasks-label')
 		? 0
-		: toDoList.children.length
+		: localStorage.length
 }
 // Open create form and load data for inputs
 function openCreateForm(
@@ -90,65 +116,33 @@ function clearInputs() {
 		['', '', '', '']
 }
 
-function createToDoItem() {
-	if (checkEmptyInput(inputName)) return 0
-
-	let tagsArr = [
-		'li',
-		'div',
-		'input',
-		'label',
-		'div',
-		'button',
-		'button',
-		'div',
-		'div',
-	]
-
-	let classesArr = [
-		'todo__item hidden',
-		'checkbox',
-		'checkbox__input',
-		'checkbox__label',
-		'item__buttons',
-		'button button--edit',
-		'button button--delete',
-		'item__content',
-		'item__name',
-	]
-
-	let idsArr = [
-		`item-${listLength + 1}`,
-		undefined,
-		`check-${listLength + 1}`,
-		undefined,
-		undefined,
-		`edit-${listLength + 1}`,
-		`delete-${listLength + 1}`,
-		undefined,
-		undefined,
-	]
-
-	if (inputDescription.value !== '') {
-		tagsArr.push('div')
-		classesArr.push('item__description')
-	}
-
-	if (inputDate.value !== '') {
-		tagsArr.push('div')
-		classesArr.push('item__date')
-	}
-
-	if (inputTime.value !== '') {
-		tagsArr.push('div')
-		classesArr.push('item__time')
-	}
-
+function renderToDoItem(itemObj) {
+	let elemsSet = new Set([
+		['li', 'todo__item hidden', `item-${listLength + 1}`],
+		['div', 'checkbox', undefined],
+		['input', 'checkbox__input', `check-${listLength + 1}`],
+		['label', 'checkbox__label', undefined],
+		['div', 'item__buttons', undefined],
+		['button', 'button button--edit', `edit-${listLength + 1}`],
+		['button', 'button button--delete', `delete-${listLength + 1}`],
+		['div', 'item__content', undefined],
+		['div', 'item__name', undefined],
+	])
 	let elemsArr = []
 
-	for (let i = 0; i < tagsArr.length; i++) {
-		elemsArr.push(createNewElement(tagsArr[i], classesArr[i], idsArr[i]))
+	if (itemObj.description !== '') {
+		elemsSet.add(['div', 'item__description', undefined])
 	}
+
+	if (itemObj.date !== '') {
+		elemsSet.add(['div', 'item__date', undefined])
+	}
+
+	if (itemObj.time !== '') {
+		elemsSet.add(['div', 'item__time', undefined])
+	}
+
+	elemsSet.forEach(elem => elemsArr.push(createNewElement(elem)))
 
 	let checkboxElem = elemsArr.find(el => el.className === 'checkbox')
 	checkboxElem.append(
@@ -164,24 +158,26 @@ function createToDoItem() {
 
 	let contentElem = elemsArr.find(el => el.className === 'item__content')
 	let itemNameElem = elemsArr.find(el => el.className === 'item__name')
-	itemNameElem.insertAdjacentText('afterbegin', inputName.value)
+	itemNameElem.innerText = itemObj.name
 	contentElem.append(itemNameElem)
 
-	if (classesArr.includes('item__description')) {
+	if (elemsArr.find(el => el.className === 'item__description')) {
 		let itemDescriptionElem = elemsArr.find(
 			el => el.className === 'item__description'
 		)
-		itemDescriptionElem.insertAdjacentText('afterbegin', inputDescription.value)
+		itemDescriptionElem.innerText = itemObj.description
 		contentElem.append(itemDescriptionElem)
 	}
-	if (classesArr.includes('item__date')) {
+
+	if (elemsArr.find(el => el.className === 'item__date')) {
 		let itemDateElem = elemsArr.find(el => el.className === 'item__date')
-		itemDateElem.insertAdjacentText('afterbegin', convertDate(inputDate.value))
+		itemDateElem.innerText = convertDate(itemObj.date)
 		contentElem.append(itemDateElem)
 	}
-	if (classesArr.includes('item__time')) {
+
+	if (elemsArr.find(el => el.className === 'item__time')) {
 		let itemTimeElem = elemsArr.find(el => el.className === 'item__time')
-		itemTimeElem.insertAdjacentText('afterbegin', inputTime.value)
+		itemTimeElem.innerText = itemObj.time
 		contentElem.append(itemTimeElem)
 	}
 
@@ -189,13 +185,28 @@ function createToDoItem() {
 	newItemElem.append(checkboxElem, btnsElem, contentElem)
 	toDoList.append(newItemElem)
 
+	setTimeout(() => {
+		newItemElem.classList.remove('hidden')
+	}, 0)
+}
+
+function createToDoItem() {
+	if (checkEmptyInput(inputName)) return 0
+
+  let dataObj = {
+    id: listLength + 1,
+		name: inputName.value,
+		description: inputDescription.value,
+		date: inputDate.value,
+		time: inputTime.value,
+  }
+
+	setTaskToLocalStorage(dataObj)
+  renderToDoItem(dataObj)
+
+  listLength++
 	closeCreateForm()
 
-	setTimeout(() => {
-		toDoList.lastChild.classList.remove('hidden')
-	}, 0)
-
-	listLength++
 	toggleNoTasksLabel()
 }
 
@@ -209,7 +220,9 @@ function checkEmptyInput(targetInput) {
 	} else return false
 }
 
-function createNewElement(elemTagName, elemClassName, elemID = undefined) {
+function createNewElement(elem) {
+	let [elemTagName, elemClassName, elemID] = [...elem]
+
 	let createdElem = document.createElement(elemTagName)
 	createdElem.className = elemClassName
 
@@ -362,4 +375,6 @@ function clearAllItems() {
 			listLength = 0
 		}, 400)
 	}
+
+  // localStorage.clear()
 }
