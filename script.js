@@ -8,58 +8,54 @@ const toDo = document.querySelector('.todo'),
 	inputTime = document.querySelector('#inputTime'),
 	cancelBtn = document.querySelector('#cancelBtn'),
 	enterBtn = document.querySelector('#enterBtn'),
-	toDoList = document.querySelector('.todo__list')
+	toDoList = document.querySelector('.todo__list'),
+	noTasksLabel = createNewElement(['span', 'todo__no-tasks-label', undefined])
+noTasksLabel.innerText = 'No tasks yet'
 
-// Writing "No tasks yet" if tasklist is empty
-const noTasksLabel = createNewElement('span', 'todo__no-tasks-label')
-noTasksLabel.insertAdjacentText('afterbegin', 'No tasks yet :(')
+let itemCheckboxes = [],
+	editItemBtns = [],
+	deleteItemBtns = [],
+	editedItem = undefined,
+	editedValues = undefined,
+	listLength = localStorage.length,
+	lastID = 0
 
-let editItemBtns,
-	deleteItemBtns,
-	itemCheckboxes,
-	editedItem = undefined
-
-let listLength = checkListLength()
-renderUserTasks()
+loadUserTasks()
 toggleNoTasksLabel()
-// getDataToLocalStorage()
+updateArraysOfElements()
 
 toDo.addEventListener('click', e => {
-	itemCheckboxes = Array.from(document.querySelectorAll('.checkbox__label'))
-
-	deleteItemBtns = Array.from(document.querySelectorAll('.button--delete'))
-
-	editItemBtns = Array.from(document.querySelectorAll('.button--edit'))
-
 	if (e.target === addBtn) openCreateForm()
-
-	if (e.target === cancelBtn) closeCreateForm()
-
-	if (e.target === enterBtn) {
-		if (editedItem) {
-			editToDoItem()
-		} else {
-			createToDoItem()
-		}
-	}
-
-	if (itemCheckboxes.includes(e.target)) toggleCheckItem(e.target)
-
-	if (editItemBtns.includes(e.target)) sendItemValues(e.target)
-
-	if (deleteItemBtns.includes(e.target)) deleteToDoItem(e.target)
-
 	if (e.target === clearAllBtn) clearAllItems()
 })
-// ===== FUNCTIONS =====
-function setTaskToLocalStorage(dataObj) {
-	localStorage.setItem(
-		`${listLength + 1}`,
-		JSON.stringify(dataObj)
-	)
-}
 
-function getDataToLocalStorage() {
+createForm.addEventListener('click', e => {
+  if (e.target === cancelBtn) closeCreateForm()
+  if (e.target === enterBtn) {
+    if (editedValues) {
+      editToDoItem()
+    } else {
+      createToDoItem()
+    }
+  }
+})
+
+toDoList.addEventListener('click', e => {
+	if (itemCheckboxes.includes(e.target)) toggleCheckItem(e.target)
+	if (editItemBtns.includes(e.target)) sendItemValues(e.target)
+	if (deleteItemBtns.includes(e.target)) deleteToDoItem(e.target)
+})
+// ===== FUNCTIONS =====
+// Loads all tasks from localStorage when the application starts
+// The argument takes the value returned from the getDataFromLocalStorage()
+function loadUserTasks(tasks = getDataFromLocalStorage()) {
+	for (task in tasks) {
+		renderToDoItem(tasks[task])
+	}
+}
+// Get all data from localStorage
+// Returns an object containing all the data
+function getDataFromLocalStorage() {
 	let userTasks = {}
 
 	for (let i = 0; i < localStorage.length; i++) {
@@ -69,62 +65,18 @@ function getDataToLocalStorage() {
 
 	return userTasks
 }
-// TODO: исправить неправильные айдишники при загрузке
-function renderUserTasks(tasks = getDataToLocalStorage()) {
-	console.log(tasks)
-	for (task in tasks) {
-		renderToDoItem(tasks[task])
-	}
-}
-
-function toggleNoTasksLabel() {
-	!toDoList.children.length
-		? toDoList.append(noTasksLabel)
-		: noTasksLabel.remove()
-}
-
-function checkListLength() {
-	return toDoList.querySelector('.todo__no-tasks-label')
-		? 0
-		: localStorage.length
-}
-// Open create form and load data for inputs
-function openCreateForm(
-	valuesObj = {
-		item__name: '',
-		item__description: '',
-		item__date: '',
-		item__time: '',
-	}
-) {
-	createForm.classList.add('showed')
-
-	inputName.value = valuesObj.item__name
-	inputDescription.value = valuesObj.item__description
-	inputDate.value = convertDate(valuesObj.item__date)
-	inputTime.value = valuesObj.item__time
-}
-
-function closeCreateForm() {
-	createForm.classList.remove('showed')
-	editedItem = undefined
-	clearInputs()
-}
-
-function clearInputs() {
-	;[inputName.value, inputDescription.value, inputDate.value, inputTime.value] =
-		['', '', '', '']
-}
-
+// Renders the html element for the task
+// The argument takes an object containing data about the task:
+// {id: int, name: string, description: string, date: string, time: string}
 function renderToDoItem(itemObj) {
 	let elemsSet = new Set([
-		['li', 'todo__item hidden', `item-${listLength + 1}`],
+		['li', 'todo__item hidden', itemObj.id],
 		['div', 'checkbox', undefined],
-		['input', 'checkbox__input', `check-${listLength + 1}`],
+		['input', 'checkbox__input', `check-${itemObj.id}`],
 		['label', 'checkbox__label', undefined],
 		['div', 'item__buttons', undefined],
-		['button', 'button button--edit', `edit-${listLength + 1}`],
-		['button', 'button button--delete', `delete-${listLength + 1}`],
+		['button', 'button button--edit', undefined],
+		['button', 'button button--delete', undefined],
 		['div', 'item__content', undefined],
 		['div', 'item__name', undefined],
 	])
@@ -185,41 +137,14 @@ function renderToDoItem(itemObj) {
 	newItemElem.append(checkboxElem, btnsElem, contentElem)
 	toDoList.append(newItemElem)
 
+	lastID = itemObj.id
+
 	setTimeout(() => {
 		newItemElem.classList.remove('hidden')
 	}, 0)
 }
-
-function createToDoItem() {
-	if (checkEmptyInput(inputName)) return 0
-
-  let dataObj = {
-    id: listLength + 1,
-		name: inputName.value,
-		description: inputDescription.value,
-		date: inputDate.value,
-		time: inputTime.value,
-  }
-
-	setTaskToLocalStorage(dataObj)
-  renderToDoItem(dataObj)
-
-  listLength++
-	closeCreateForm()
-
-	toggleNoTasksLabel()
-}
-
-function checkEmptyInput(targetInput) {
-	if (targetInput.value.trim() === '') {
-		targetInput.style.background = 'rgba(231,157, 157, 0.5)'
-		setTimeout(() => {
-			targetInput.style.background = 'transparent'
-		}, 3000)
-		return true
-	} else return false
-}
-
+// Returns an html element
+// The argument takes an array of [html tag (string), css class (string), id (string or undefined)]
 function createNewElement(elem) {
 	let [elemTagName, elemClassName, elemID] = [...elem]
 
@@ -231,7 +156,7 @@ function createNewElement(elem) {
 	if (elemTagName === 'input') createdElem.type = 'checkbox'
 
 	if (elemTagName === 'label')
-		createdElem.setAttribute('for', `check-${listLength + 1}`)
+		createdElem.setAttribute('for', `check-${lastID + 1}`)
 
 	if (elemClassName === 'button button--edit') {
 		createdElem.insertAdjacentHTML(
@@ -249,27 +174,155 @@ function createNewElement(elem) {
 
 	return createdElem
 }
-// Convert values from date inputs
+// Convert values from date inputs and returns them
+// Takes a string with the date value as an argument
 function convertDate(dateValue) {
-	const dateFromInput = /(\d{4})-(\d{2})-(\d{2})/
-	const dateFromItem = /(\d{2})\.(\d{2})\.(\d{4})/
+	const dateFromInput = /(\d{4})-(\d{2})-(\d{2})/,
+		dateFromItem = /(\d{2})\.(\d{2})\.(\d{4})/
 
 	return dateFromInput.test(dateValue)
 		? dateValue.replace(dateFromInput, '$3.$2.$1')
 		: dateValue.replace(dateFromItem, '$3-$2-$1')
 }
-// Delete the task item
-function deleteToDoItem(targetBtn) {
-	let targetItem = targetBtn.parentNode.parentNode
-	targetItem.style.transitionDelay = '0s'
-	targetItem.classList.add('hidden')
+// Toggles the noTasksLabel
+function toggleNoTasksLabel() {
+	!listLength ? toDoList.append(noTasksLabel) : noTasksLabel.remove()
+}
+// Updates arrays with dynamic elements (checkboxes, edit and delete buttons)
+function updateArraysOfElements() {
+	itemCheckboxes = Array.from(document.querySelectorAll('.checkbox__label'))
+	editItemBtns = Array.from(document.querySelectorAll('.button--edit'))
+	deleteItemBtns = Array.from(document.querySelectorAll('.button--delete'))
+}
+// Open create form and load data for inputs
+// The argument takes an object with data to fill in the form inputs
+function openCreateForm(
+	dataObj = {
+		name: '',
+		description: '',
+		date: '',
+		time: '',
+	}
+) {
+	createForm.classList.add('showed')
 
-	setTimeout(() => {
-		targetItem.remove()
-		toggleNoTasksLabel()
-	}, 400)
+	inputName.value = dataObj.name
+	inputDescription.value = dataObj.description
+	inputDate.value = convertDate(dataObj.date)
+	inputTime.value = dataObj.time
+
+	inputName.focus()
+	createForm.addEventListener('keyup', enterKeyUpHandler)
+}
+// Handler for the event listener of keyup event
+function enterKeyUpHandler(e) {
+	if (e.code === 'Enter') {
+		e.preventDefault()
+		editedItem ? editToDoItem() : createToDoItem()
+	}
+}
+// Clear task list
+function clearAllItems() {
+	let toDoListChildren = toDoList.children
+  localStorage.clear()
+	listLength = 0
+	lastID = 0
+	updateArraysOfElements()
+
+	for (let item of toDoListChildren) {
+		item.style.transitionDelay = '0s'
+		item.classList.add('hidden')
+
+		setTimeout(() => {
+			item.remove()
+			toggleNoTasksLabel()
+		}, 400)
+	}
+}
+// Close createForm and cancels all changes
+function closeCreateForm() {
+	createForm.classList.remove('showed')
+	editedItem = undefined
+	;[inputName.value, inputDescription.value, inputDate.value, inputTime.value] =
+		['', '', '', '']
+	createForm.removeEventListener('keyup', enterKeyUpHandler)
+}
+// Editing information in an existing task
+function editToDoItem() {
+	if (checkEmptyInput(inputName)) return 0
+
+	let dataObj = {
+		id: editedItem.id,
+		name: inputName.value,
+		description: inputDescription.value,
+		date: inputDate.value,
+		time: inputTime.value,
+	}
+	setTaskToLocalStorage(dataObj)
+	editedItem.querySelector('.item__name').innerText = dataObj.name
+	rerenderItemContent(dataObj.description, 'item__description')
+	rerenderItemContent(convertDate(dataObj.date), 'item__date')
+	rerenderItemContent(dataObj.time, 'item__time')
+	closeCreateForm()
+	editedItem = editedValues = undefined
+}
+// Checks if the input is empty
+// Takes the target input as an argument
+// Returns a boolean value
+function checkEmptyInput(targetInput) {
+	if (targetInput.value.trim() === '') {
+		targetInput.style.background = 'rgba(231,157, 157, 0.5)'
+		setTimeout(() => {
+			targetInput.style.background = 'transparent'
+		}, 3000)
+		return true
+	} else return false
+}
+// Uploads the task data to localStorage
+// The argument takes an object with task data
+function setTaskToLocalStorage(dataObj) {
+	localStorage.setItem(`${dataObj.id}`, JSON.stringify(dataObj))
+  listLength = localStorage.length
+  console.log(listLength)
+}
+// Rerenders html element when editing a task
+// The arguments take the value from the input and the class of the html element
+function rerenderItemContent(value, elemClassName) {
+	let elem = editedItem.querySelector(elemClassName)
+
+	if (value) {
+		// Если инпут не пустой
+		if (!elem) {
+			// Если элемента нет
+			let newElem = createNewElement(['div', elemClassName, undefined])
+			newElem.innerText = value
+			editedItem.querySelector('.item__content').append(newElem)
+		} else if (value !== elem.innerText) elem.innerText = value // Если элемент есть и значения разные
+	} else {
+		// Если инпут пустой
+		if (elem) elem.remove()
+	}
+}
+// Creates a new html element for a task based on data from createForm
+function createToDoItem() {
+	if (checkEmptyInput(inputName)) return 0
+
+	let dataObj = {
+		id: lastID + 1,
+		name: inputName.value,
+		description: inputDescription.value,
+		date: inputDate.value,
+		time: inputTime.value,
+	}
+
+	setTaskToLocalStorage(dataObj)
+	renderToDoItem(dataObj)
+	toggleNoTasksLabel()
+	updateArraysOfElements()
+	closeCreateForm()
 }
 // Toogle status of task (completed or uncompleted)
+// The arguments take target checkbox
 function toggleCheckItem(targetCheckbox) {
 	let targetItem = targetCheckbox.parentNode.parentNode
 	let targetEditBtn = targetItem
@@ -282,99 +335,24 @@ function toggleCheckItem(targetCheckbox) {
 
 	targetItem.classList.toggle('checked')
 }
-// Collect values of task into object & send it to create form
+// Collect values of task into object and send it to createForm
+// The arguments take target button
 function sendItemValues(targetBtn) {
+	editedItem = targetBtn.parentNode.parentNode
+	editedValues = JSON.parse(localStorage.getItem(editedItem.id))
+	openCreateForm(editedValues)
+}
+// Delete the task item
+function deleteToDoItem(targetBtn) {
 	let targetItem = targetBtn.parentNode.parentNode
-	let targetValues = Array.from(
-		targetItem.querySelector('.item__content').children
-	)
-	let valuesArr = targetValues.map(el => [el.className, el.innerText])
-	let valuesObj = {
-		item__name: '',
-		item__description: '',
-		item__date: '',
-		item__time: '',
-	}
+	targetItem.style.transitionDelay = '0s'
+	targetItem.classList.add('hidden')
+	localStorage.removeItem(`${targetItem.id}`)
+	listLength = localStorage.length
+	updateArraysOfElements()
 
-	valuesArr.forEach(function (item) {
-		if (valuesObj.hasOwnProperty(item[0])) {
-			valuesObj[item[0]] = item[1]
-		}
-	})
-
-	editedItem = targetItem.id
-	openCreateForm(valuesObj)
-}
-// Editing information in an existing task
-function editToDoItem() {
-	let targetItem = document.querySelector(`#${editedItem}`)
-	let targetItemContent = targetItem.querySelector('.item__content')
-	let targetItemName = targetItemContent.querySelector('.item__name')
-	let targetItemDescription =
-		targetItemContent.querySelector('.item__description')
-	let targetItemDate = targetItemContent.querySelector('.item__date')
-	let targetItemTime = targetItemContent.querySelector('.item__time')
-
-	if (checkEmptyInput(inputName)) return 0
-
-	targetItemName.innerText = inputName.value
-	// if the description input contains information
-	if (!checkEmptyInput(inputDescription)) {
-		// if there was no description in the task
-		if (!targetItemDescription) {
-			let newItemDescription = createNewElement('div', 'item__description')
-			newItemDescription.innerText = inputDescription.value
-			targetItemContent.append(newItemDescription)
-			// if the description was already present in the task and it has been changed
-		} else if (inputDescription.value !== targetItemDescription.innerText) {
-			targetItemDescription.innerText = inputDescription.value
-		}
-		// if the description input is empty and was already present in the task
-	} else if (targetItemDescription) targetItemDescription.remove()
-	// if the date input contains information
-	if (!checkEmptyInput(inputDate)) {
-		// if there was no date in the task
-		if (!targetItemDate) {
-			let newItemDate = createNewElement('div', 'item__date')
-			newItemDate.innerText = convertDate(inputDate.value)
-			targetItemContent.append(newItemDate)
-			// if the date was already present in the task and it has been changed
-		} else if (convertDate(inputDate.value) !== targetItemDate.innerText) {
-			targetItemDate.innerText = convertDate(inputDate.value)
-		}
-		// if the date input is empty and was already present in the task
-	} else if (targetItemDate) targetItemDate.remove()
-	// if the time input contains information
-	if (!checkEmptyInput(inputTime)) {
-		// if there was no time in the task
-		if (!targetItemTime) {
-			let newItemTime = createNewElement('div', 'item__time')
-			newItemTime.innerText = inputTime.value
-			targetItemContent.append(newItemTime)
-			// if the time was already present in the task and it has been changed
-		} else if (inputTime.value !== targetItemTime.innerText) {
-			targetItemTime.innerText = inputTime.value
-		}
-		// if the time input is empty and was already present in the task
-	} else if (targetItemTime) targetItemTime.remove()
-
-	closeCreateForm()
-	editedItem = undefined
-}
-// Clear task list
-function clearAllItems() {
-	let toDoListChildren = toDoList.children
-
-	for (let item of toDoListChildren) {
-		item.style.transitionDelay = '0s'
-		item.classList.add('hidden')
-
-		setTimeout(() => {
-			item.remove()
-			toggleNoTasksLabel()
-			listLength = 0
-		}, 400)
-	}
-
-  // localStorage.clear()
+	setTimeout(() => {
+		targetItem.remove()
+		toggleNoTasksLabel()
+	}, 400)
 }

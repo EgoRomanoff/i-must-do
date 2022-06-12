@@ -282,6 +282,11 @@ h2 {
       background: #c8e7f3;
       border: 5px solid #fff;
       border-radius: 10px;
+      cursor: pointer;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #7ec0da;
     }
   }
 
