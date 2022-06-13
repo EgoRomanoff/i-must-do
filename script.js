@@ -9,8 +9,11 @@ const toDo = document.querySelector('.todo'),
 	cancelBtn = document.querySelector('#cancelBtn'),
 	enterBtn = document.querySelector('#enterBtn'),
 	toDoList = document.querySelector('.todo__list'),
+  modal = document.querySelector('.modal'),
+  modalYesButton = document.querySelector('#modalYesBtn'),
+  modalCancelButton = document.querySelector('#modalCancelBtn'),
 	noTasksLabel = createNewElement(['span', 'todo__no-tasks-label', undefined])
-noTasksLabel.innerText = 'No tasks yet'
+noTasksLabel.innerText = 'No tasks yet\n Add your first one!'
 
 let itemCheckboxes = [],
 	editItemBtns = [],
@@ -26,7 +29,7 @@ updateArraysOfElements()
 
 toDo.addEventListener('click', e => {
 	if (e.target === addBtn) openCreateForm()
-	if (e.target === clearAllBtn) clearAllItems()
+	if (e.target === clearAllBtn) showModal(e.target)// clearAllItems()
 })
 
 createForm.addEventListener('click', e => {
@@ -140,11 +143,37 @@ function renderToDoItem(itemObj) {
 	newItemElem.append(checkboxElem, btnsElem, contentElem)
 	toDoList.append(newItemElem)
 
+  if (itemObj.checked === true) {
+    newItemElem.querySelector('.button--edit').setAttribute('disabled', '')
+    newItemElem.querySelector('.checkbox__input').checked = true
+    newItemElem.classList.toggle('checked')
+  }
+
 	lastID = itemObj.id
 
 	setTimeout(() => {
 		newItemElem.classList.remove('hidden')
 	}, 0)
+}
+// Show modal window
+function showModal(targetBtn) {
+  modal.style.display = 'block'
+
+  setTimeout(() => {
+    modal.classList.add('showed')
+    document.addEventListener('click', modalHandler)
+  }, 0)
+
+}
+
+function modalHandler(e) {
+  if (e.target === modal.querySelector('.modal__content')) return
+  if (e.target === modalYesButton) clearAllItems()
+  modal.classList.remove('showed')
+  document.removeEventListener('click', modalHandler)
+  setTimeout(() => {
+    modal.style.display = 'none'
+  }, 350)
 }
 // Returns an html element
 // The argument takes an array of [html tag (string), css class (string), id (string or undefined)]
@@ -211,7 +240,7 @@ function openCreateForm(
 
 	inputName.value = dataObj.name
 	inputDescription.value = dataObj.description
-	inputDate.value = convertDate(dataObj.date)
+	inputDate.value = dataObj.date
 	inputTime.value = dataObj.time
 
 	inputName.focus()
@@ -260,6 +289,7 @@ function editToDoItem() {
 		description: inputDescription.value,
 		date: inputDate.value,
 		time: inputTime.value,
+    checked: false
 	}
 	setTaskToLocalStorage(dataObj)
 	editedItem.querySelector('.item__name').innerText = dataObj.name
@@ -286,12 +316,11 @@ function checkEmptyInput(targetInput) {
 function setTaskToLocalStorage(dataObj) {
 	localStorage.setItem(`${dataObj.id}`, JSON.stringify(dataObj))
   listLength = localStorage.length
-  console.log(listLength)
 }
 // Rerenders html element when editing a task
 // The arguments take the value from the input and the class of the html element
 function rerenderItemContent(value, elemClassName) {
-	let elem = editedItem.querySelector(elemClassName)
+	let elem = editedItem.querySelector(`.${elemClassName}`)
 
 	if (value) {
 		// Если инпут не пустой
@@ -316,6 +345,7 @@ function createToDoItem() {
 		description: inputDescription.value,
 		date: inputDate.value,
 		time: inputTime.value,
+    checked: false
 	}
 
 	setTaskToLocalStorage(dataObj)
@@ -327,15 +357,21 @@ function createToDoItem() {
 // Toogle status of task (completed or uncompleted)
 // The arguments take target checkbox
 function toggleCheckItem(targetCheckbox) {
+  console.log(targetCheckbox);
 	let targetItem = targetCheckbox.parentNode.parentNode
-	let targetEditBtn = targetItem
-		.querySelector('.item__buttons')
-		.querySelector('.button--edit')
+	let targetEditBtn = targetItem.querySelector('.button--edit')
+  let checkedValues = JSON.parse(localStorage.getItem(targetItem.id))
+  console.log(checkedValues)
 
-	targetEditBtn.hasAttribute('disabled')
-		? targetEditBtn.removeAttribute('disabled')
-		: targetEditBtn.setAttribute('disabled', '')
+  if (targetEditBtn.hasAttribute('disabled')) {
+    targetEditBtn.removeAttribute('disabled')
+    checkedValues.checked = false
+  } else {
+    targetEditBtn.setAttribute('disabled', '')
+    checkedValues.checked = true
+  }
 
+  setTaskToLocalStorage(checkedValues)
 	targetItem.classList.toggle('checked')
 }
 // Collect values of task into object and send it to createForm

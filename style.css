@@ -170,6 +170,37 @@ h2 {
   content: 'Close';
 }
 
+.button--modal-yes, .button--modal-cancel {
+  width: 95px;
+  outline: none;
+  border: 2px solid transparent;
+  border-radius: 15px;
+  padding: 6px 10px;
+  background: white;
+  font: 1rem/1rem 'Inter', sans-serif;
+  font-weight: 800;
+  -webkit-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;
+}
+
+.button--modal-yes {
+  background: #b6ebc3;
+  color: #154900;
+}
+
+.button--modal-yes:hover {
+  border-color: #154900;
+}
+
+.button--modal-cancel {
+  background: #e79d9d;
+  color: #490000;
+}
+
+.button--modal-cancel:hover {
+  border-color: #490000;
+}
+
 .main {
   position: relative;
   display: -webkit-box;
@@ -272,6 +303,7 @@ h2 {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+  height: 100%;
   border-radius: 6px;
   padding-bottom: 10px;
   background: #fff;
@@ -301,6 +333,16 @@ h2 {
 }
 
 .todo__no-tasks-label {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
   padding: 10px;
   text-align: center;
   font: 1rem/1.5rem 'Inter', sans-serif;
@@ -480,7 +522,7 @@ h2 {
 .item__date::before, .item__time::before {
   width: 17px;
   height: 17px;
-  margin: -1px 6px 0 0;
+  margin-right: 6px;
 }
 
 .item__description::before {
@@ -489,10 +531,11 @@ h2 {
 
 .item__date::before {
   content: url(icons/icon-calendar.svg);
+  margin-top: -1px;
 }
 
 .item__time::before {
-  content: url(icons/icon-calendar.svg);
+  content: url(icons/icon-clock.svg);
 }
 
 .item__buttons {
@@ -548,4 +591,81 @@ h2 {
 .checkbox__input:checked + .checkbox__label::before {
   border-color: #7ec0da;
   background: #7ec0da url(icons/icon-check.svg) center/cover no-repeat;
+}
+
+.modal {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  background: transparent;
+  opacity: 0;
+  -webkit-transition: opacity .25s ease;
+  transition: opacity .25s ease;
+}
+
+.modal.showed {
+  opacity: 1;
+}
+
+.modal.showed .modal__content {
+  -webkit-transform: scale(1);
+          transform: scale(1);
+}
+
+.modal__wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border-radius: 4px;
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.modal__content {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-column-gap: 10px;
+          column-gap: 10px;
+  border-radius: 4px;
+  padding: 20px 15px;
+  background: white;
+  max-width: 280px;
+  -webkit-box-shadow: 0px 0px 20px 1px rgba(34, 60, 80, 0.2);
+          box-shadow: 0px 0px 20px 1px rgba(34, 60, 80, 0.2);
+  -webkit-transform: scale(0.8);
+          transform: scale(0.8);
+  -webkit-transition: -webkit-transform .35s ease;
+  transition: -webkit-transform .35s ease;
+  transition: transform .35s ease;
+  transition: transform .35s ease, -webkit-transform .35s ease;
+}
+
+.modal__content span {
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
+  text-align: center;
+  pointer-events: none;
+  margin-bottom: 15px;
 }

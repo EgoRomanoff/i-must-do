@@ -4,8 +4,8 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <link rel="icon" href="./favicon.ico" type="image/x-icon"> -->
-    <link rel="icon" href="./er-logo_120x120.svg" type="image/svg+xml">
+		<!-- <link rel="icon" href="./favicon.ico" type="image/x-icon"> -->
+		<link rel="icon" href="./er-logo_120x120.svg" type="image/svg+xml" />
 		<title>I Must Do</title>
 		<link rel="stylesheet" href="style.css" />
 	</head>
@@ -127,6 +127,16 @@
 				</div>
 
 				<ul class="todo__list"></ul>
+
+				<div class="modal">
+          <div class="modal__wrapper">
+            <div class="modal__content">
+              <span>Are you sure you want to delete <b>all the tasks?</b></span>
+              <button class="button button--modal-yes" id="modalYesBtn">Yes</button>
+              <button class="button button--modal-cancel" id="modalCancelBtn">Cancel</button>
+            </div>
+          </div>
+        </div>
 			</div>
 		</main>
 
