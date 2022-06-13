@@ -157,7 +157,7 @@ function renderToDoItem(itemObj) {
 }
 // Show modal window
 function showModal(targetBtn) {
-  modal.style.display = 'block'
+  modal.style.display = 'flex'
 
   setTimeout(() => {
     modal.classList.add('showed')
