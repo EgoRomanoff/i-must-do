@@ -49,6 +49,8 @@ toDoList.addEventListener('click', e => {
 // Loads all tasks from localStorage when the application starts
 // The argument takes the value returned from the getDataFromLocalStorage()
 function loadUserTasks(tasks = getDataFromLocalStorage()) {
+  if (!tasks) return 0
+
 	for (task in tasks) {
 		renderToDoItem(tasks[task])
 	}
@@ -56,6 +58,7 @@ function loadUserTasks(tasks = getDataFromLocalStorage()) {
 // Get all data from localStorage
 // Returns an object containing all the data
 function getDataFromLocalStorage() {
+  if (!listLength) return 0
 	let userTasks = {}
 
 	for (let i = 0; i < localStorage.length; i++) {
