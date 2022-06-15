@@ -47,7 +47,7 @@ ___
   "checked": false
 }
 ```
-
+___
 ### Рендер элементов в списке задач
 При загрузке приложения или добавлении новой задачи HTML-элементы создаются с помощью функций `renderToDoItem(itemObj)` и `createNewElement(elem)`.
 
@@ -201,3 +201,5 @@ function rerenderItemContent(value, elemClassName) {
 
 </p>
 </details>
+
+___
