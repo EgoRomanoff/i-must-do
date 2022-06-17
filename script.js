@@ -44,10 +44,6 @@ class TaskData {
 		totalCounter.innerText = listLength = localStorage.length
 	}
 }
-
-let testData = new TaskData(
-	...Object.values(JSON.parse(localStorage.getItem(4)))
-)
 //======================================================================
 loadUserTasks()
 toggleNoTasksLabel()
