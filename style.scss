@@ -34,9 +34,9 @@ h2 {
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  font: .875rem/1rem 'Inter', sans-serif;
 
   &--add, &--clear-all,
-  &--enter, &--cancel,
   &--edit, &--delete {
     border: none;
     border-radius: 50%;
@@ -107,7 +107,7 @@ h2 {
   }
 
   &--add::before {
-    content: 'Add Task';
+    content: 'New Task';
   }
 
   &--clear-all::before {
@@ -115,24 +115,48 @@ h2 {
   }
 
   &--enter, &--cancel {
-    width: 26px;
+    column-gap: 4px;
     height: 26px;
+    padding: 5px 10px;
+    border: 2px solid transparent;
+    border-radius: 13px;
+    background: transparent;
+    transition: all .2s ease-in-out;
+    font-weight: 600;
 
-    &::before {
-      bottom: calc(50% - 10px);
-      width: 54px;
-      padding: 2px;
+    & svg {
+      width: 0;
+      transition: width .2s ease-in-out;
+    }
+
+    &:hover {
+
+      & svg {
+        width: 16px;
+      }
     }
   }
 
-  &--enter::before {
-    content: 'Enter';
-    left: -58px;
+  &--enter {
+    padding-right: 5px;
+    background:#b6ebc3;
+    color: #154900;
+
+    &:hover {
+      border-color: #207934;
+      color: #207934;
+    }
   }
 
-  &--cancel::before {
-    content: 'Cancel';
-    right: -58px;
+  &--cancel {
+    padding-left: 5px;
+    background: #e79d9d;
+    color: #490000;
+
+    &:hover {
+      border-color: #792020;
+      color: #792020;
+    }
   }
 
   &--edit, &--delete {
@@ -238,7 +262,7 @@ h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     padding: 0 10px;
     z-index: 9;
   }
@@ -264,18 +288,20 @@ h2 {
     min-height: 0;
     max-height: 0;
     border-radius: 6px;
-    padding: 0 10px;
     background: #fff;
     z-index: -1;
     transition: max-height .3s cubic-bezier(0.215, 0.61, 0.355, 1),
                 padding .3s cubic-bezier(0.215, 0.61, 0.355, 1),
-                min-height .3s ease;
+                min-height .3s cubic-bezier(0.215, 0.61, 0.355, 1),
+                opacity .3s cubic-bezier(0.215, 0.61, 0.355, 1);
     overflow: hidden;
+    opacity: 0;
 
     &.showed {
       min-height: 154px;
       max-height: 154px;
-      padding: 10px 10px 0;
+      padding: 10px;
+      opacity: 1;
 
       & input, div {
         opacity: 1;
@@ -288,13 +314,21 @@ h2 {
     }
   }
 
+  &__statistics {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 10px 10px;
+    font: .8rem/1rem 'Inter', sans-serif;
+    color: #8f8f8f;
+  }
+
   &__list {
     position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;
     border-radius: 6px;
-    padding-bottom: 10px;
+    padding: 0 0 15px;
     background: #fff;
     list-style: none;
     overflow-y: auto;

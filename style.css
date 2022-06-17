@@ -39,9 +39,10 @@ h2 {
       -ms-flex-align: center;
           align-items: center;
   cursor: pointer;
+  font: .875rem/1rem 'Inter', sans-serif;
 }
 
-.button--add, .button--clear-all, .button--enter, .button--cancel, .button--edit, .button--delete {
+.button--add, .button--clear-all, .button--edit, .button--delete {
   border: none;
   border-radius: 50%;
   outline: 2px solid transparent;
@@ -50,11 +51,11 @@ h2 {
   transition: all .2s ease-in-out;
 }
 
-.button--add svg, .button--clear-all svg, .button--enter svg, .button--cancel svg, .button--edit svg, .button--delete svg {
+.button--add svg, .button--clear-all svg, .button--edit svg, .button--delete svg {
   pointer-events: none;
 }
 
-.button--add::before, .button--clear-all::before, .button--enter::before, .button--cancel::before, .button--edit::before, .button--delete::before {
+.button--add::before, .button--clear-all::before, .button--edit::before, .button--delete::before {
   position: absolute;
   border-radius: 6px;
   font: .75rem/1rem 'Inter', sans-serif;
@@ -65,11 +66,11 @@ h2 {
   transition: opacity .2s ease-in-out;
 }
 
-.button--add:hover::before, .button--clear-all:hover::before, .button--enter:hover::before, .button--cancel:hover::before, .button--edit:hover::before, .button--delete:hover::before {
+.button--add:hover::before, .button--clear-all:hover::before, .button--edit:hover::before, .button--delete:hover::before {
   opacity: 1;
 }
 
-.button--add:disabled, .button--add[disabled], .button--clear-all:disabled, .button--clear-all[disabled], .button--enter:disabled, .button--enter[disabled], .button--cancel:disabled, .button--cancel[disabled], .button--edit:disabled, .button--edit[disabled], .button--delete:disabled, .button--delete[disabled] {
+.button--add:disabled, .button--add[disabled], .button--clear-all:disabled, .button--clear-all[disabled], .button--edit:disabled, .button--edit[disabled], .button--delete:disabled, .button--delete[disabled] {
   opacity: 0 !important;
   cursor: default;
 }
@@ -107,7 +108,7 @@ h2 {
 }
 
 .button--add::before {
-  content: 'Add Task';
+  content: 'New Task';
 }
 
 .button--clear-all::before {
@@ -115,24 +116,48 @@ h2 {
 }
 
 .button--enter, .button--cancel {
-  width: 26px;
+  -webkit-column-gap: 4px;
+          column-gap: 4px;
   height: 26px;
+  padding: 5px 10px;
+  border: 2px solid transparent;
+  border-radius: 13px;
+  background: transparent;
+  -webkit-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;
+  font-weight: 600;
 }
 
-.button--enter::before, .button--cancel::before {
-  bottom: calc(50% - 10px);
-  width: 54px;
-  padding: 2px;
+.button--enter svg, .button--cancel svg {
+  width: 0;
+  -webkit-transition: width .2s ease-in-out;
+  transition: width .2s ease-in-out;
 }
 
-.button--enter::before {
-  content: 'Enter';
-  left: -58px;
+.button--enter:hover svg, .button--cancel:hover svg {
+  width: 16px;
 }
 
-.button--cancel::before {
-  content: 'Cancel';
-  right: -58px;
+.button--enter {
+  padding-right: 5px;
+  background: #b6ebc3;
+  color: #154900;
+}
+
+.button--enter:hover {
+  border-color: #207934;
+  color: #207934;
+}
+
+.button--cancel {
+  padding-left: 5px;
+  background: #e79d9d;
+  color: #490000;
+}
+
+.button--cancel:hover {
+  border-color: #792020;
+  color: #792020;
 }
 
 .button--edit, .button--delete {
@@ -245,7 +270,7 @@ h2 {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   padding: 0 10px;
   z-index: 9;
 }
@@ -270,18 +295,19 @@ h2 {
   min-height: 0;
   max-height: 0;
   border-radius: 6px;
-  padding: 0 10px;
   background: #fff;
   z-index: -1;
-  -webkit-transition: max-height 0.3s cubic-bezier(0.215, 0.61, 0.355, 1), padding 0.3s cubic-bezier(0.215, 0.61, 0.355, 1), min-height 0.3s ease;
-  transition: max-height 0.3s cubic-bezier(0.215, 0.61, 0.355, 1), padding 0.3s cubic-bezier(0.215, 0.61, 0.355, 1), min-height 0.3s ease;
+  -webkit-transition: max-height 0.3s cubic-bezier(0.215, 0.61, 0.355, 1), padding 0.3s cubic-bezier(0.215, 0.61, 0.355, 1), min-height 0.3s cubic-bezier(0.215, 0.61, 0.355, 1), opacity 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+  transition: max-height 0.3s cubic-bezier(0.215, 0.61, 0.355, 1), padding 0.3s cubic-bezier(0.215, 0.61, 0.355, 1), min-height 0.3s cubic-bezier(0.215, 0.61, 0.355, 1), opacity 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
   overflow: hidden;
+  opacity: 0;
 }
 
 .todo__create-form.showed {
   min-height: 154px;
   max-height: 154px;
-  padding: 10px 10px 0;
+  padding: 10px;
+  opacity: 1;
 }
 
 .todo__create-form.showed input, .todo__create-form.showed div {
@@ -292,6 +318,18 @@ h2 {
   opacity: 0;
   -webkit-transition: opacity .3s ease;
   transition: opacity .3s ease;
+}
+
+.todo__statistics {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 15px 10px 10px;
+  font: .8rem/1rem 'Inter', sans-serif;
+  color: #8f8f8f;
 }
 
 .todo__list {
@@ -305,7 +343,7 @@ h2 {
           flex-direction: column;
   height: 100%;
   border-radius: 6px;
-  padding-bottom: 10px;
+  padding: 0 0 15px;
   background: #fff;
   list-style: none;
   overflow-y: auto;

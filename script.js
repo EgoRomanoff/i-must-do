@@ -9,9 +9,11 @@ const toDo = document.querySelector('.todo'),
 	cancelBtn = document.querySelector('#cancelBtn'),
 	enterBtn = document.querySelector('#enterBtn'),
 	toDoList = document.querySelector('.todo__list'),
-  modal = document.querySelector('.modal'),
-  modalYesButton = document.querySelector('#modalYesBtn'),
-  modalCancelButton = document.querySelector('#modalCancelBtn'),
+  totalCounter = document.querySelector('#total'),
+  completedCounter = document.querySelector('#completed'),
+	modal = document.querySelector('.modal'),
+	modalYesButton = document.querySelector('#modalYesBtn'),
+	modalCancelButton = document.querySelector('#modalCancelBtn'),
 	noTasksLabel = createNewElement(['span', 'todo__no-tasks-label', undefined])
 noTasksLabel.innerText = 'No tasks yet\n Add your first one!'
 
@@ -19,28 +21,54 @@ let itemCheckboxes = [],
 	editItemBtns = [],
 	deleteItemBtns = [],
 	editedItem = undefined,
-	editedValues = undefined,
 	listLength = localStorage.length,
+  checkedItems = 0,
 	lastID = 0
+//=====================================================================
+class TaskData {
+	constructor(id, name, description, date, time, checked) {
+		this.id = Number(id)
+		this.name = String(name)
+		this.description = String(description)
+		this.date = String(date)
+		this.time = String(time)
+		this.checked = Boolean(checked)
+	}
 
+	toString() {
+		return JSON.stringify(this)
+	}
+
+	setToLocalStorage() {
+		localStorage.setItem(this.id, this.toString())
+		totalCounter.innerText = listLength = localStorage.length
+	}
+}
+
+let testData = new TaskData(
+	...Object.values(JSON.parse(localStorage.getItem(4)))
+)
+//======================================================================
 loadUserTasks()
 toggleNoTasksLabel()
 updateArraysOfElements()
+totalCounter.innerText = listLength
+completedCounter.innerText = checkedItems
 
 toDo.addEventListener('click', e => {
 	if (e.target === addBtn) openCreateForm()
-	if (e.target === clearAllBtn) showModal(e.target)// clearAllItems()
+	if (e.target === clearAllBtn) showModal(e.target) // clearAllItems()
 })
 
 createForm.addEventListener('click', e => {
-  if (e.target === cancelBtn) closeCreateForm()
-  if (e.target === enterBtn) {
-    if (editedValues) {
-      editToDoItem()
-    } else {
-      createToDoItem()
-    }
-  }
+	if (e.target === cancelBtn) closeCreateForm()
+	if (e.target === enterBtn) {
+		if (editedItem) {
+			editToDoItem()
+		} else {
+			createToDoItem()
+		}
+	}
 })
 
 toDoList.addEventListener('click', e => {
@@ -50,35 +78,28 @@ toDoList.addEventListener('click', e => {
 })
 // ===== FUNCTIONS =====
 // Loads all tasks from localStorage when the application starts
-// The argument takes the value returned from the getDataFromLocalStorage()
-function loadUserTasks(tasks = getDataFromLocalStorage()) {
-  if (!tasks) return 0
-
-	for (task in tasks) {
-		renderToDoItem(tasks[task])
-	}
-}
-// Get all data from localStorage
-// Returns an object containing all the data
-function getDataFromLocalStorage() {
-  if (!listLength) return 0
+function loadUserTasks() {
+	if (!listLength) return 0
 	let userTasks = {}
 
 	for (let i = 0; i < localStorage.length; i++) {
 		let taskID = localStorage.key(i)
 		userTasks[taskID] = JSON.parse(localStorage.getItem(taskID))
+    if (userTasks[taskID].checked === true) ++checkedItems
 	}
 
-	return userTasks
+	for (let task in userTasks) {
+		renderToDoItem(userTasks[task])
+	}
 }
 // Renders the html element for the task
 // The argument takes an object containing data about the task:
 // {id: int, name: string, description: string, date: string, time: string}
-function renderToDoItem(itemObj) {
+function renderToDoItem(data) {
 	let elemsSet = new Set([
-		['li', 'todo__item hidden', itemObj.id],
+		['li', 'todo__item hidden', data.id],
 		['div', 'checkbox', undefined],
-		['input', 'checkbox__input', `check-${itemObj.id}`],
+		['input', 'checkbox__input', `check-${data.id}`],
 		['label', 'checkbox__label', undefined],
 		['div', 'item__buttons', undefined],
 		['button', 'button button--edit', undefined],
@@ -88,15 +109,15 @@ function renderToDoItem(itemObj) {
 	])
 	let elemsArr = []
 
-	if (itemObj.description !== '') {
+	if (data.description !== '') {
 		elemsSet.add(['div', 'item__description', undefined])
 	}
 
-	if (itemObj.date !== '') {
+	if (data.date !== '') {
 		elemsSet.add(['div', 'item__date', undefined])
 	}
 
-	if (itemObj.time !== '') {
+	if (data.time !== '') {
 		elemsSet.add(['div', 'item__time', undefined])
 	}
 
@@ -116,26 +137,26 @@ function renderToDoItem(itemObj) {
 
 	let contentElem = elemsArr.find(el => el.className === 'item__content')
 	let itemNameElem = elemsArr.find(el => el.className === 'item__name')
-	itemNameElem.innerText = itemObj.name
+	itemNameElem.innerText = data.name
 	contentElem.append(itemNameElem)
 
 	if (elemsArr.find(el => el.className === 'item__description')) {
 		let itemDescriptionElem = elemsArr.find(
 			el => el.className === 'item__description'
 		)
-		itemDescriptionElem.innerText = itemObj.description
+		itemDescriptionElem.innerText = data.description
 		contentElem.append(itemDescriptionElem)
 	}
 
 	if (elemsArr.find(el => el.className === 'item__date')) {
 		let itemDateElem = elemsArr.find(el => el.className === 'item__date')
-		itemDateElem.innerText = convertDate(itemObj.date)
+		itemDateElem.innerText = convertDate(data.date)
 		contentElem.append(itemDateElem)
 	}
 
 	if (elemsArr.find(el => el.className === 'item__time')) {
 		let itemTimeElem = elemsArr.find(el => el.className === 'item__time')
-		itemTimeElem.innerText = itemObj.time
+		itemTimeElem.innerText = data.time
 		contentElem.append(itemTimeElem)
 	}
 
@@ -143,37 +164,35 @@ function renderToDoItem(itemObj) {
 	newItemElem.append(checkboxElem, btnsElem, contentElem)
 	toDoList.append(newItemElem)
 
-  if (itemObj.checked === true) {
-    newItemElem.querySelector('.button--edit').setAttribute('disabled', '')
-    newItemElem.querySelector('.checkbox__input').checked = true
-    newItemElem.classList.toggle('checked')
-  }
+	if (data.checked === true) {
+		newItemElem.querySelector('.button--edit').setAttribute('disabled', '')
+		newItemElem.querySelector('.checkbox__input').checked = true
+		newItemElem.classList.toggle('checked')
+	}
 
-	lastID = itemObj.id
-
+	lastID = Number(data.id)
 	setTimeout(() => {
 		newItemElem.classList.remove('hidden')
 	}, 0)
 }
 // Show modal window
 function showModal(targetBtn) {
-  modal.style.display = 'flex'
+	modal.style.display = 'flex'
 
-  setTimeout(() => {
-    modal.classList.add('showed')
-    document.addEventListener('click', modalHandler)
-  }, 0)
-
+	setTimeout(() => {
+		modal.classList.add('showed')
+		document.addEventListener('click', modalHandler)
+	}, 0)
 }
 
 function modalHandler(e) {
-  if (e.target === modal.querySelector('.modal__content')) return
-  if (e.target === modalYesButton) clearAllItems()
-  modal.classList.remove('showed')
-  document.removeEventListener('click', modalHandler)
-  setTimeout(() => {
-    modal.style.display = 'none'
-  }, 350)
+	if (e.target === modal.querySelector('.modal__content')) return
+	if (e.target === modalYesButton) clearAllItems()
+	modal.classList.remove('showed')
+	document.removeEventListener('click', modalHandler)
+	setTimeout(() => {
+		modal.style.display = 'none'
+	}, 350)
 }
 // Returns an html element
 // The argument takes an array of [html tag (string), css class (string), id (string or undefined)]
@@ -229,19 +248,14 @@ function updateArraysOfElements() {
 // Open create form and load data for inputs
 // The argument takes an object with data to fill in the form inputs
 function openCreateForm(
-	dataObj = {
-		name: '',
-		description: '',
-		date: '',
-		time: '',
-	}
+	data = new TaskData(lastID + 1, '', '', '', '', false)
 ) {
 	createForm.classList.add('showed')
 
-	inputName.value = dataObj.name
-	inputDescription.value = dataObj.description
-	inputDate.value = dataObj.date
-	inputTime.value = dataObj.time
+	inputName.value = data.name
+	inputDescription.value = data.description
+	inputDate.value = data.date
+	inputTime.value = data.time
 
 	inputName.focus()
 	createForm.addEventListener('keyup', enterKeyUpHandler)
@@ -256,8 +270,8 @@ function enterKeyUpHandler(e) {
 // Clear task list
 function clearAllItems() {
 	let toDoListChildren = toDoList.children
-  localStorage.clear()
-	listLength = 0
+	localStorage.clear()
+	totalCounter.innerText = listLength = 0
 	lastID = 0
 	updateArraysOfElements()
 
@@ -283,21 +297,15 @@ function closeCreateForm() {
 function editToDoItem() {
 	if (checkEmptyInput(inputName)) return 0
 
-	let dataObj = {
-		id: editedItem.id,
-		name: inputName.value,
-		description: inputDescription.value,
-		date: inputDate.value,
-		time: inputTime.value,
-    checked: false
-	}
-	setTaskToLocalStorage(dataObj)
-	editedItem.querySelector('.item__name').innerText = dataObj.name
-	rerenderItemContent(dataObj.description, 'item__description')
-	rerenderItemContent(convertDate(dataObj.date), 'item__date')
-	rerenderItemContent(dataObj.time, 'item__time')
+  let data = new TaskData(editedItem.id, inputName.value, inputDescription.value, inputDate.value, inputTime.value, false)
+
+  data.setToLocalStorage()
+	editedItem.querySelector('.item__name').innerText = data.name
+	rerenderItemContent(data.description, 'item__description')
+	rerenderItemContent(convertDate(data.date), 'item__date')
+	rerenderItemContent(data.time, 'item__time')
 	closeCreateForm()
-	editedItem = editedValues = undefined
+	editedItem = undefined
 }
 // Checks if the input is empty
 // Takes the target input as an argument
@@ -310,12 +318,6 @@ function checkEmptyInput(targetInput) {
 		}, 3000)
 		return true
 	} else return false
-}
-// Uploads the task data to localStorage
-// The argument takes an object with task data
-function setTaskToLocalStorage(dataObj) {
-	localStorage.setItem(`${dataObj.id}`, JSON.stringify(dataObj))
-  listLength = localStorage.length
 }
 // Rerenders html element when editing a task
 // The arguments take the value from the input and the class of the html element
@@ -339,47 +341,50 @@ function rerenderItemContent(value, elemClassName) {
 function createToDoItem() {
 	if (checkEmptyInput(inputName)) return 0
 
-	let dataObj = {
-		id: lastID + 1,
-		name: inputName.value,
-		description: inputDescription.value,
-		date: inputDate.value,
-		time: inputTime.value,
-    checked: false
-	}
+	let data = new TaskData(
+		lastID + 1,
+		inputName.value,
+		inputDescription.value,
+		inputDate.value,
+		inputTime.value,
+		false
+	)
 
-	setTaskToLocalStorage(dataObj)
-	renderToDoItem(dataObj)
+	data.setToLocalStorage()
+	renderToDoItem(data)
 	toggleNoTasksLabel()
 	updateArraysOfElements()
 	closeCreateForm()
 }
 // Toogle status of task (completed or uncompleted)
 // The arguments take target checkbox
-function toggleCheckItem(targetCheckbox) {
-  console.log(targetCheckbox);
-	let targetItem = targetCheckbox.parentNode.parentNode
+function toggleCheckItem(target) {
+  let targetItem = target.parentNode.parentNode
+  let targetCheckbox = target.parentNode.querySelector('.checkbox__input')
 	let targetEditBtn = targetItem.querySelector('.button--edit')
-  let checkedValues = JSON.parse(localStorage.getItem(targetItem.id))
-  console.log(checkedValues)
+	let checkedValues = Object.values(JSON.parse(localStorage.getItem(targetItem.id)))
+  let data = new TaskData(...checkedValues)
 
-  if (targetEditBtn.hasAttribute('disabled')) {
-    targetEditBtn.removeAttribute('disabled')
-    checkedValues.checked = false
-  } else {
+  if (!targetCheckbox.checked) {
     targetEditBtn.setAttribute('disabled', '')
-    checkedValues.checked = true
+		data.checked = true
+    completedCounter.innerText = ++checkedItems
+  } else {
+    targetEditBtn.removeAttribute('disabled')
+		data.checked = false
+    completedCounter.innerText = --checkedItems
   }
 
-  setTaskToLocalStorage(checkedValues)
+  data.setToLocalStorage()
 	targetItem.classList.toggle('checked')
 }
 // Collect values of task into object and send it to createForm
 // The arguments take target button
 function sendItemValues(targetBtn) {
 	editedItem = targetBtn.parentNode.parentNode
-	editedValues = JSON.parse(localStorage.getItem(editedItem.id))
-	openCreateForm(editedValues)
+	let editedValues = Object.values(JSON.parse(localStorage.getItem(editedItem.id)))
+	let data = new TaskData(...editedValues)
+	openCreateForm(data)
 }
 // Delete the task item
 function deleteToDoItem(targetBtn) {
@@ -387,7 +392,7 @@ function deleteToDoItem(targetBtn) {
 	targetItem.style.transitionDelay = '0s'
 	targetItem.classList.add('hidden')
 	localStorage.removeItem(`${targetItem.id}`)
-	listLength = localStorage.length
+	totalCounter.innerText = listLength = localStorage.length
 	updateArraysOfElements()
 
 	setTimeout(() => {
