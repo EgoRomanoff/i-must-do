@@ -162,13 +162,14 @@ function renderToDoItem(data) {
 
 	let newItemElem = elemsArr.find(el => el.className === 'todo__item hidden')
 	newItemElem.append(checkboxElem, btnsElem, contentElem)
-	toDoList.append(newItemElem)
 
 	if (data.checked === true) {
-		newItemElem.querySelector('.button--edit').setAttribute('disabled', '')
+    newItemElem.querySelector('.button--edit').setAttribute('disabled', '')
 		newItemElem.querySelector('.checkbox__input').checked = true
 		newItemElem.classList.toggle('checked')
 	}
+
+  toDoList.append(newItemElem)
 
 	lastID = Number(data.id)
 	setTimeout(() => {
