@@ -268,7 +268,7 @@ function enterKeyUpHandler(e) {
 function clearAllItems() {
 	let toDoListChildren = toDoList.children
 	localStorage.clear()
-	totalCounter.innerText = listLength = 0
+	totalCounter.innerText = listLength = completedCounter.innerText = checkedItems = 0
 	lastID = 0
 	updateArraysOfElements()
 
@@ -390,6 +390,7 @@ function deleteToDoItem(targetBtn) {
 	targetItem.classList.add('hidden')
 	localStorage.removeItem(`${targetItem.id}`)
 	totalCounter.innerText = listLength = localStorage.length
+  if (targetItem.classList.contains('checked')) completedCounter.innerText = --checkedItems
 	updateArraysOfElements()
 
 	setTimeout(() => {
