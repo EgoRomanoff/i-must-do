@@ -76,6 +76,13 @@ toDoList.addEventListener('click', e => {
 // Loads all tasks from localStorage when the application starts
 function loadUserTasks() {
 	if (!listLength) return 0
+
+  for (let i = 0; i < localStorage.length; i++) {
+    if (!Number(localStorage.key(i))) {
+      localStorage.removeItem(localStorage.key(i))
+    }
+  }
+
 	let userTasks = {}
 
 	for (let i = 0; i < localStorage.length; i++) {
@@ -227,7 +234,7 @@ function createNewElement(elem) {
 function convertDate(dateValue) {
 	const dateFromInput = /(\d{4})-(\d{2})-(\d{2})/,
 		dateFromItem = /(\d{2})\.(\d{2})\.(\d{4})/
-
+    
 	return dateFromInput.test(dateValue)
 		? dateValue.replace(dateFromInput, '$3.$2.$1')
 		: dateValue.replace(dateFromItem, '$3-$2-$1')
